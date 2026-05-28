@@ -1,0 +1,6 @@
+{
+  "name": "Assinatura de Resumos de Livros",
+  "description": "Aplicativo para assinar planos e ler resumos detalhados de livros populares de negócios, desenvolvimento pessoal e liderança.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
