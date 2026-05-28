@@ -12,6 +12,7 @@ interface BookReaderProps {
   progress: UserProgress;
   toggleFavorite: (bookId: string) => void;
   markAsRead: (bookId: string) => void;
+  readingPace?: number;
 }
 
 const VOICES = [
@@ -20,8 +21,11 @@ const VOICES = [
   { id: 'v-3', name: 'Gabriel (Foco)' }
 ];
 
-export default function BookReader({ book, onBack, progress, toggleFavorite, markAsRead }: BookReaderProps) {
+export default function BookReader({ book, onBack, progress, toggleFavorite, markAsRead, readingPace }: BookReaderProps) {
   const [activeChapterIndex, setActiveChapterIndex] = useState(0);
+  const adjustedTime = readingPace
+    ? Math.max(1, Math.round(book.readTimeMin * (200 / readingPace)))
+    : book.readTimeMin;
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('md');
   const [fontFamily, setFontFamily] = useState<'sans' | 'serif'>('serif');
   
@@ -96,7 +100,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
     return lines.map((line, index) => {
       if (line.startsWith('### ')) {
         return (
-          <h4 key={index} className="text-lg font-bold text-slate-800 mt-6 mb-3 tracking-tight font-sans">
+          <h4 key={index} className="text-lg font-bold text-slate-800 dark:text-slate-200 mt-6 mb-3 tracking-tight font-sans">
             {line.replace('### ', '')}
           </h4>
         );
@@ -106,8 +110,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return (
           <div key={index} className="flex gap-2.5 my-2 pl-2">
             <span className="text-indigo-500 font-bold">•</span>
-            <p className="text-slate-600">
-              <strong className="text-slate-800">{parts[0]}</strong>{parts.slice(1).join('')}
+            <p className="text-slate-600 dark:text-slate-350">
+              <strong className="text-slate-800 dark:text-slate-100">{parts[0]}</strong>{parts.slice(1).join('')}
             </p>
           </div>
         );
@@ -117,8 +121,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return (
           <div key={index} className="flex gap-2.5 my-2 pl-2">
             <span className="text-indigo-500 font-bold font-mono">1.</span>
-            <p className="text-slate-600">
-              <strong className="text-slate-800">{parts[0]}</strong>{parts.slice(1).join('')}
+            <p className="text-slate-600 dark:text-slate-350">
+              <strong className="text-slate-800 dark:text-slate-100">{parts[0]}</strong>{parts.slice(1).join('')}
             </p>
           </div>
         );
@@ -128,8 +132,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return (
           <div key={index} className="flex gap-2.5 my-2 pl-2">
             <span className="text-indigo-500 font-bold font-mono">2.</span>
-            <p className="text-slate-600">
-              <strong className="text-slate-800">{parts[0]}</strong>{parts.slice(1).join('')}
+            <p className="text-slate-600 dark:text-slate-350">
+              <strong className="text-slate-800 dark:text-slate-100">{parts[0]}</strong>{parts.slice(1).join('')}
             </p>
           </div>
         );
@@ -139,8 +143,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return (
           <div key={index} className="flex gap-2.5 my-2 pl-2">
             <span className="text-indigo-500 font-bold font-mono">3.</span>
-            <p className="text-slate-600">
-              <strong className="text-slate-800">{parts[0]}</strong>{parts.slice(1).join('')}
+            <p className="text-slate-600 dark:text-slate-350">
+              <strong className="text-slate-800 dark:text-slate-100">{parts[0]}</strong>{parts.slice(1).join('')}
             </p>
           </div>
         );
@@ -150,8 +154,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return (
           <div key={index} className="flex gap-2.5 my-2 pl-2">
             <span className="text-indigo-500 font-bold font-mono">4.</span>
-            <p className="text-slate-600">
-              <strong className="text-slate-800">{parts[0]}</strong>{parts.slice(1).join('')}
+            <p className="text-slate-600 dark:text-slate-350">
+              <strong className="text-slate-800 dark:text-slate-100">{parts[0]}</strong>{parts.slice(1).join('')}
             </p>
           </div>
         );
@@ -163,7 +167,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         return <div key={index} className="h-3" />;
       }
       return (
-        <p key={index} className="text-slate-600 leading-relaxed mb-4">
+        <p key={index} className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
           {line}
         </p>
       );
@@ -178,7 +182,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         {/* Back button */}
         <button 
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium text-sm py-1"
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors font-medium text-sm py-1"
           id="btn-back-catalog"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -186,7 +190,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         </button>
 
         {/* Small Book Details Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-100 dark:border-slate-800/80 shadow-sm transition-colors duration-300">
           <div className={`aspect-[3/4] w-32 mx-auto rounded-lg shadow-md bg-gradient-to-br ${book.coverColor} p-4 flex flex-col justify-between mb-4`}>
             <div className={`text-[9px] uppercase tracking-wider font-bold ${book.coverTextColor}/70 text-right`}>Smart Summary</div>
             <div className="space-y-1">
@@ -195,25 +199,27 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
             </div>
           </div>
 
-          <h3 className="font-bold text-slate-800 text-base leading-tight mb-1">{book.title}</h3>
-          <p className="text-slate-400 text-xs mb-3">Escrito por {book.author}</p>
+          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-base leading-tight mb-1">{book.title}</h3>
+          <p className="text-slate-400 dark:text-slate-500 text-xs mb-3">Escrito por {book.author}</p>
           
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs bg-slate-100 text-slate-600 py-0.5 px-2.5 rounded-full font-medium">
+            <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 py-0.5 px-2.5 rounded-full font-medium font-sans">
               {book.category}
             </span>
-            <span className="text-xs text-slate-400">• {book.readTimeMin} min de leitura</span>
+            <span className="text-xs text-slate-455 dark:text-slate-400" title={`Original: ${book.readTimeMin} min`}>
+              • {adjustedTime} min de leitura {readingPace && readingPace !== 200 && `(ajustado para ${readingPace} PPM)`}
+            </span>
           </div>
 
           {/* Quick status bar */}
-          <div className="border-t border-slate-100 pt-3 space-y-2">
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-3 space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="text-slate-500">Seu progresso da leitura:</span>
-              <span className="font-semibold text-slate-700">
+              <span className="text-slate-500 dark:text-slate-400">Seu progresso da leitura:</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">
                 {Math.round(((activeChapterIndex + 1) / book.chapters.length) * 100)}%
               </span>
             </div>
-            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
                 className="bg-indigo-600 h-full rounded-full transition-all duration-300" 
                 style={{ width: `${((activeChapterIndex + 1) / book.chapters.length) * 100}%` }}
@@ -307,9 +313,9 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
                 style={{ width: `${audioProgress}%` }}
               />
             </div>
-            <div className="flex justify-between items-center text-[9px] text-slate-500 font-mono">
-              <span>{Math.floor((audioProgress * book.readTimeMin * 60) / 100 / 60)}:{(Math.floor((audioProgress * book.readTimeMin * 60) / 100) % 60).toString().padStart(2, '0')}</span>
-              <span>{book.readTimeMin}:00</span>
+            <div className="flex justify-between items-center text-[9px] text-slate-400 dark:text-slate-500 font-mono">
+              <span>{Math.floor((audioProgress * adjustedTime * 60) / 100 / 60)}:{(Math.floor((audioProgress * adjustedTime * 60) / 100) % 60).toString().padStart(2, '0')}</span>
+              <span>{adjustedTime}:00</span>
             </div>
           </div>
 
@@ -366,11 +372,11 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         </div>
 
         {/* Chapters list navigation */}
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Capítulos ({book.chapters.length})</h4>
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors duration-300">
+          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-xs uppercase tracking-wider">Capítulos ({book.chapters.length})</h4>
           </div>
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-slate-50 dark:divide-slate-800/55">
             {book.chapters.map((chapter, i) => {
               const active = i === activeChapterIndex;
               return (
@@ -384,13 +390,13 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
                   }}
                   className={`w-full text-left px-5 py-3.5 text-xs font-medium flex items-center justify-between transition-all ${
                     active 
-                      ? 'bg-indigo-50 text-indigo-700' 
-                      : 'text-slate-600 hover:bg-slate-50/60 hover:text-slate-950'
+                      ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 font-bold' 
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50/60 dark:hover:bg-slate-800/35 hover:text-slate-950 dark:hover:text-slate-200'
                   }`}
                   id={`chapter-nav-${i}`}
                 >
                   <span className="line-clamp-2">{chapter.title}</span>
-                  <ChevronRight className={`w-3.5 h-3.5 ${active ? 'text-indigo-600' : 'text-slate-300'}`} />
+                  <ChevronRight className={`w-3.5 h-3.5 ${active ? 'text-indigo-600' : 'text-slate-300 dark:text-slate-600'}`} />
                 </button>
               );
             })}
@@ -399,17 +405,17 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
       </div>
 
       {/* RIGHT COLUMN: Interactive Text Reader */}
-      <div className="flex-1 w-full bg-white rounded-xl border border-slate-150/80 shadow-sm flex flex-col" id="reader-right-content">
+      <div className="flex-1 w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-150/80 dark:border-slate-800 shadow-sm flex flex-col transition-colors duration-300" id="reader-right-content">
         
         {/* Top Control Bar (Font sizing, fontFamily, bookmarks, complete tracker) */}
-        <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap gap-4 justify-between items-center bg-slate-50/50 rounded-t-xl" id="reader-top-bar">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-wrap gap-4 justify-between items-center bg-slate-50/50 dark:bg-slate-950/50 rounded-t-xl transition-colors duration-300" id="reader-top-bar">
           <div className="flex items-center gap-3">
             {/* Font Family selector */}
-            <div className="flex border border-slate-200 rounded-lg p-0.5 bg-white shadow-sm">
+            <div className="flex border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 bg-white dark:bg-slate-900 shadow-sm">
               <button
                 onClick={() => setFontFamily('sans')}
-                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                  fontFamily === 'sans' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
+                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  fontFamily === 'sans' ? 'bg-slate-900 dark:bg-slate-800 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
                 id="font-sans"
               >
@@ -417,8 +423,8 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
               </button>
               <button
                 onClick={() => setFontFamily('serif')}
-                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
-                  fontFamily === 'serif' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
+                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  fontFamily === 'serif' ? 'bg-slate-900 dark:bg-slate-800 text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
                 id="font-serif"
               >
@@ -427,14 +433,14 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
             </div>
 
             {/* Font Size controls */}
-            <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5 shadow-sm">
-              <span className="text-[10px] text-slate-400 font-bold px-2 uppercase">Alt</span>
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 shadow-sm">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold px-2 uppercase">Alt</span>
               {(['sm', 'md', 'lg', 'xl'] as const).map(sz => (
                 <button
                   key={sz}
                   onClick={() => setFontSize(sz)}
-                  className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs uppercase transition-all ${
-                    fontSize === sz ? 'bg-slate-100 text-indigo-700 font-extrabold' : 'text-slate-400 hover:text-slate-600'
+                  className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs uppercase transition-all cursor-pointer ${
+                    fontSize === sz ? 'bg-slate-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-400 font-extrabold' : 'text-slate-400 dark:text-slate-500 hover:text-slate-650 dark:hover:text-slate-300'
                   }`}
                   id={`font-size-${sz}`}
                 >
@@ -448,10 +454,10 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
             {/* Bookmark toggle */}
             <button
               onClick={() => toggleFavorite(book.id)}
-              className={`p-2 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-all ${
+              className={`p-2 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                 isBookmarked 
-                  ? 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm' 
-                  : 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-400 shadow-sm' 
+                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850'
               }`}
               id="btn-bookmark-reader"
             >
@@ -462,10 +468,10 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
             {/* Complete tracking */}
             <button
               onClick={() => markAsRead(book.id)}
-              className={`p-2 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`p-2 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                 isCompleted 
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
-                  : 'bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-700 shadow-sm active:translate-y-px'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-400' 
+                  : 'bg-indigo-600 dark:bg-indigo-750 border-indigo-500 dark:border-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-650 shadow-sm active:translate-y-px'
               }`}
               id="btn-mark-completed"
             >
@@ -482,16 +488,16 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-indigo-50/60 border border-indigo-100/50 rounded-2xl p-5 mb-8 text-sm"
+              className="bg-indigo-50/60 dark:bg-indigo-950/15 border border-indigo-100/50 dark:border-indigo-900/30 rounded-2xl p-5 mb-8 text-sm transition-colors duration-300"
               id="takeaways-banner"
             >
-              <h4 className="font-bold text-indigo-900 pb-2 flex items-center gap-1.5 leading-none">
-                <Sparkles className="w-4.5 h-4.5 text-indigo-500 fill-indigo-200" />
+              <h4 className="font-bold text-indigo-900 dark:text-indigo-300 pb-2 flex items-center gap-1.5 leading-none">
+                <Sparkles className="w-4.5 h-4.5 text-indigo-500 fill-indigo-200 dark:fill-indigo-900/50" />
                 Lições e Liames Essenciais do Livro
               </h4>
               <ul className="space-y-2 mt-1">
                 {book.takeaways.map((takeaway, i) => (
-                  <li key={i} className="flex gap-2 text-slate-600 font-medium leading-relaxed">
+                  <li key={i} className="flex gap-2 text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     <span className="text-indigo-500 font-bold font-mono">✦</span>
                     <span>{takeaway}</span>
                   </li>
@@ -502,7 +508,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
 
           {/* Chapter headers */}
           <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl md:text-3xl font-serif font-black tracking-tight text-slate-900 dark:text-slate-100 text-balance">
               {activeChapter.title}
             </h2>
             <div className="h-1 w-12 bg-indigo-500 rounded mt-3" />
@@ -515,7 +521,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
         </div>
 
         {/* Bottom Navigator */}
-        <div className="p-6 border-t border-slate-100 bg-slate-50/30 flex justify-between rounded-b-xl">
+        <div className="p-6 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/30 dark:bg-slate-950/20 flex justify-between rounded-b-xl transition-colors duration-300">
           <button
             disabled={activeChapterIndex === 0}
             onClick={() => {
@@ -523,7 +529,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
               setAudioProgress(0);
               setIsPlayingAudio(false);
             }}
-            className="px-4 py-2 text-xs font-semibold border border-slate-200 rounded-lg text-slate-500 hover:text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all bg-white"
+            className="px-4 py-2 text-xs font-semibold border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all bg-white dark:bg-slate-900 cursor-pointer"
             id="btn-prev-chapter"
           >
             Capítulo Anterior
@@ -536,7 +542,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
                 setAudioProgress(0);
                 setIsPlayingAudio(false);
               }}
-              className="px-4 py-2 text-xs font-semibold bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-sm"
+              className="px-4 py-2 text-xs font-semibold bg-slate-900 dark:bg-slate-850 text-white dark:text-slate-100 rounded-lg hover:bg-slate-800 dark:hover:bg-slate-800 transition-all shadow-sm cursor-pointer"
               id="btn-next-chapter"
             >
               Próximo Capítulo
@@ -547,7 +553,7 @@ export default function BookReader({ book, onBack, progress, toggleFavorite, mar
                 markAsRead(book.id);
                 onBack();
               }}
-              className="px-4 py-2 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-600/10"
+              className="px-4 py-2 text-xs font-semibold bg-emerald-600 dark:bg-emerald-700 text-white rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-650 transition-all shadow-sm shadow-emerald-600/10 cursor-pointer"
               id="btn-finish-reading"
             >
               Finalizar Resumo 📘

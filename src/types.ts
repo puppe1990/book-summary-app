@@ -52,5 +52,6 @@ export interface BookReview {
 export interface UserProgress {
   readBooks: string[]; // List of book IDs completed
   favoriteBooks: string[]; // List of book IDs bookmarked
+  readLaterBooks?: string[]; // List of book IDs saved for later
   currentChapterIndexes: { [bookId: string]: number }; // Progress saved per book
 }
